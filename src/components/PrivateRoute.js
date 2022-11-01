@@ -6,7 +6,7 @@ import { useFirebase } from './FirebaseProvider';
 
 function PrivateRoute({component:Component, ...restProps}){
 
-    const {user} = useFirebase;
+    const {user} = useFirebase();
     return <Route
     {...restProps}
         render = {props => {
@@ -14,7 +14,10 @@ function PrivateRoute({component:Component, ...restProps}){
             <Component {...props}/>
             :
             <Redirect to={{
-                pathname: '/login'
+                pathname: '/login',
+                state: {
+                    from: props.location
+                }
             }}/>
         }}
     />

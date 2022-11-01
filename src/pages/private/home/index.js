@@ -1,9 +1,15 @@
 import React from 'react'
+import { useFirebase } from '../../../components/FirebaseProvider';
 
 function Home(){
-    return <h1>
-        Halaman Home (buat transaksi)
-    </h1>
+    const {auth} = useFirebase();
+    return <button
+    onClick={(e) =>{
+        auth.signOut()
+    }}
+  >
+    Sign out
+  </button>
 }
 
 export default Home;
