@@ -1,19 +1,47 @@
-import React from 'react'
+import React from 'react';
 
-import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
+//material-ui
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Paper from '@mui/material/Paper';
 
-//komponen halaman
+import { Switch, Route, Redirect } from 'react-router-dom';
+// komponen halaman pengguna
 import Pengguna from './pengguna';
 import Toko from './toko';
 
-function Pengaturan(){
+// styles
+import useStyles from './styles';
+
+function Pengaturan(props) {
+
+    const { location, history } = props;
+    const classes = useStyles();
+    const handleChangeTab = (event, value) => {
+
+        history.push(value);
+    }
+
     return (
-            <Switch> 
-                <Route path="/pengaturan/pengguna" component={Pengguna}></Route>
-                <Route path="/pengaturan/toko" component={Toko}></Route>
-                <Redirect to="/pengaturan/pengguna"></Redirect>
-            </Switch>
-        
-    );
+        <Paper square>
+            <Tabs
+                value={location.pathname}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleChangeTab} 
+            >
+                <Tab label="Pengguna" value="/pengaturan/pengguna" />
+                <Tab label="Toko" value="/pengaturan/toko" />
+            </Tabs>
+            <div className={classes.tabContent}>
+                <Switch>
+                    <Route path="/pengaturan/pengguna" component={Pengguna} />
+                    <Route path="/pengaturan/toko" component={Toko} />
+                    <Redirect to="/pengaturan/pengguna" />
+                </Switch>
+            </div>
+        </Paper>
+    )
 }
-export default Pengaturan
+
+export default Pengaturan;
