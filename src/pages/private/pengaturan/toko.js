@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 
 import isURL from 'validator/lib/isURL';
+import { useFirebase } from '../../../components/FirebaseProvider';
 function Toko(){
     const [isSubmitting, setSubmitting] = useState(false);
+    const { firestore, user } = useFirebase(); //utk menyimpan data di sebuah dokumen ke collection gunakan firestore
+
+    const tokoDoc = firestore.doc(`toko/${user.uid}`);//toko adalah collection dan ${user.uid} adalah dokumen id
     const [form, setForm] = useState({
         nama: '',
         alamat: '',
@@ -49,12 +53,23 @@ function Toko(){
 
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
         const findErrors = validate();
 
         if (Object.values(findErrors).some(err => err !== '')){
             setError(findErrors);
+        }else{
+
+            setSubmitting(true);
+            try{
+                await tokoDoc.set(form, { merge:true });
+                document.querySelector('.notif_block').style.display = 'block';
+                document.querySelector('.notif_block').innerText = 'Data toko berhasil disimpan';
+            }catch(e){
+                console.log(e.message)
+            }
+            setSubmitting(false);
         }
     }
     
@@ -123,7 +138,7 @@ function Toko(){
                             <input
                                 id="telepon"
                                 name="telepon"
-                                type="text"
+                                type="number"
                                 autoComplete="telepon"
                                 required
                                 className="relative block w-full appearance-none rounded-none rounded border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -138,15 +153,15 @@ function Toko(){
                             <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                                 Website toko
                             </label>
-                            <div class="mt-1 flex rounded-md shadow-sm">
-                                <span class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
+                            <div className="mt-1 flex rounded-md shadow-sm">
+                                <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
                                     http://</span>
                                 <input 
                                 type="text" 
                                 name="website" 
                                 id="website" 
                                 required
-                                class="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" 
+                                className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" 
                                 placeholder="www.example.com"
                                 value={form.website}
                                 onChange={handleChange}
